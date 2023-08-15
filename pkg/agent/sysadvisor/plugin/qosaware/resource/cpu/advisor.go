@@ -251,9 +251,16 @@ func (cra *cpuResourceAdvisor) update() {
 		klog.Errorf("[qosaware-cpu] assemble provision failed: %v", err)
 		return
 	}
+
+	klog.Infof("[qosaware-cpu-debug] a0")
+
 	cra.updateRegionStatus(boundUpper)
 
+	klog.Infof("[qosaware-cpu-debug] a1")
+
 	cra.emitMetrics(calculationResult)
+
+	klog.Infof("[qosaware-cpu-debug] a2")
 
 	// notify cpu server
 	select {
@@ -262,6 +269,8 @@ func (cra *cpuResourceAdvisor) update() {
 	default:
 		klog.Errorf("[qosaware-cpu] channel is full")
 	}
+
+	klog.Infof("[qosaware-cpu-debug] a3")
 }
 
 // setIsolatedContainers get isolation status from isolator and update into containers
@@ -437,11 +446,17 @@ func (cra *cpuResourceAdvisor) updateAdvisorEssentials() {
 // must make sure pool names from cpu provision following qrm definition;
 // numa ID set as -1 means no numa-preference is needed.
 func (cra *cpuResourceAdvisor) assembleProvision() (types.InternalCPUCalculationResult, bool, error) {
+	klog.Infof("[qosaware-cpu-debug] c0")
+
 	if cra.provisionAssembler == nil {
 		return types.InternalCPUCalculationResult{}, false, fmt.Errorf("no legal provision assembler")
 	}
 
+	klog.Infof("[qosaware-cpu-debug] c1")
+
 	calculationResult, boundUpper, err := cra.provisionAssembler.AssembleProvision()
+
+	klog.Infof("[qosaware-cpu-debug] c2")
 
 	return calculationResult, boundUpper, err
 }

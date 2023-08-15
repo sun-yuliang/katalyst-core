@@ -62,7 +62,11 @@ func NewProvisionAssemblerCommon(conf *config.Configuration, _ interface{}, regi
 }
 
 func (pa *ProvisionAssemblerCommon) AssembleProvision() (types.InternalCPUCalculationResult, bool, error) {
+	klog.Infof("[qosaware-cpu-debug] b0")
+
 	enableReclaim := pa.conf.GetDynamicConfiguration().EnableReclaim
+
+	klog.Infof("[qosaware-cpu-debug] b1")
 
 	calculationResult := types.InternalCPUCalculationResult{
 		PoolEntries: make(map[string]map[int]int),
@@ -73,6 +77,8 @@ func (pa *ProvisionAssemblerCommon) AssembleProvision() (types.InternalCPUCalcul
 	reservePoolSize, _ := pa.metaReader.GetPoolSize(state.PoolNameReserve)
 	calculationResult.SetPoolEntry(state.PoolNameReserve, cpuadvisor.FakedNUMAID, reservePoolSize)
 
+	klog.Infof("[qosaware-cpu-debug] b2")
+
 	shares := 0
 	isolationUppers := 0
 
@@ -81,10 +87,14 @@ func (pa *ProvisionAssemblerCommon) AssembleProvision() (types.InternalCPUCalcul
 	isolationLowerSizes := make(map[string]int)
 
 	for _, r := range *pa.regionMap {
+		klog.Infof("[qosaware-cpu-debug] b3")
+
 		controlKnob, err := r.GetProvision()
 		if err != nil {
 			return types.InternalCPUCalculationResult{}, false, err
 		}
+
+		klog.Infof("[qosaware-cpu-debug] b4")
 
 		switch r.Type() {
 		case types.QoSRegionTypeShare:
@@ -117,6 +127,8 @@ func (pa *ProvisionAssemblerCommon) AssembleProvision() (types.InternalCPUCalcul
 				calculationResult.SetPoolEntry(state.PoolNameReclaim, regionNuma, reclaimed)
 			}
 		}
+
+		klog.Infof("[qosaware-cpu-debug] b5")
 	}
 
 	klog.Infof("[qosaware-cpu] share size: %v", sharePoolSizes)
@@ -130,6 +142,8 @@ func (pa *ProvisionAssemblerCommon) AssembleProvision() (types.InternalCPUCalcul
 	}
 	boundUpper := regulatePoolSizes(shareAndIsolatePoolSizes, shareAndIsolatedPoolAvailable, enableReclaim)
 
+	klog.Infof("[qosaware-cpu-debug] b6")
+
 	// fill in regulated share-and-isolated pool entries
 	for poolName, poolSize := range shareAndIsolatePoolSizes {
 		calculationResult.SetPoolEntry(poolName, cpuadvisor.FakedNUMAID, poolSize)
@@ -137,6 +151,8 @@ func (pa *ProvisionAssemblerCommon) AssembleProvision() (types.InternalCPUCalcul
 
 	reclaimPoolSizeOfNonBindingNumas := shareAndIsolatedPoolAvailable - general.SumUpMapValues(shareAndIsolatePoolSizes) + pa.getNumasReservedForReclaim(*pa.nonBindingNumas)
 	calculationResult.SetPoolEntry(state.PoolNameReclaim, cpuadvisor.FakedNUMAID, reclaimPoolSizeOfNonBindingNumas)
+
+	klog.Infof("[qosaware-cpu-debug] b7")
 
 	return calculationResult, boundUpper, nil
 }
