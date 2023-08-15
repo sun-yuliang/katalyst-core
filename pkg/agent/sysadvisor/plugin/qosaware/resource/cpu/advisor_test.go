@@ -49,6 +49,7 @@ import (
 	"github.com/kubewharf/katalyst-core/pkg/metaserver/agent/pod"
 	"github.com/kubewharf/katalyst-core/pkg/metaserver/spd"
 	"github.com/kubewharf/katalyst-core/pkg/metrics"
+	metricspool "github.com/kubewharf/katalyst-core/pkg/metrics/metrics-pool"
 	"github.com/kubewharf/katalyst-core/pkg/util/machine"
 	utilmetric "github.com/kubewharf/katalyst-core/pkg/util/metric"
 )
@@ -65,7 +66,7 @@ func generateTestConfiguration(t *testing.T, checkpointDir, stateFileDir string)
 }
 
 func newTestCPUResourceAdvisor(t *testing.T, pods []*v1.Pod, conf *config.Configuration, mf *metric.FakeMetricsFetcher, profiles map[k8stypes.UID]spd.DummyPodServiceProfile) (*cpuResourceAdvisor, metacache.MetaCache) {
-	metaCache, err := metacache.NewMetaCacheImp(conf, metric.NewFakeMetricsFetcher(metrics.DummyMetrics{}))
+	metaCache, err := metacache.NewMetaCacheImp(conf, metricspool.DummyMetricsEmitterPool{}, metric.NewFakeMetricsFetcher(metrics.DummyMetrics{}))
 	require.NoError(t, err)
 
 	// numa node0 cpu(s): 0-23,48-71
