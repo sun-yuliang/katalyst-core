@@ -17,5 +17,6 @@ limitations under the License.
 package consts
 
 const (
-	ModelNameBorwein = "borwein"
+	ModelNameBorwein                   = "borwein"
+	ModelNameBorweinTrainingThroughput = "borwein_training_throughput"
 )
