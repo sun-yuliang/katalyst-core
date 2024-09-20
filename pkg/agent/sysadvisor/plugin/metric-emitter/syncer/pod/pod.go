@@ -215,7 +215,7 @@ func (p *MetricSyncerPod) receiveRawPod(ctx context.Context, pod *v1.Pod, rChan 
 				continue
 			}
 
-			klog.V(4).Infof("get metric %v for pod %v, collect time %+v, left len %v",
+			klog.Infof("get metric %v for pod %v, collect time %+v, left len %v",
 				response.Req.MetricName, name, response.Time, len(rChan))
 			if len(tags) > 0 {
 				_ = p.dataEmitter.StoreFloat64(targetMetricName, response.Value, metrics.MetricTypeNameRaw, append(tags,
